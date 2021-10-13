@@ -2,6 +2,20 @@
 
 This repository contains a Sprint Boot project that defines an API server using Java and Gradle. You'll secure this API with Auth0 to practice making secure API calls from a client application.
 
+## Configuration
+
+To configure the application, please add a `.env` file to the root of the project. No worries, this file is ignored by the VCS so each collaborator can use their own configuration. The `.env` file can contain the following environment variables:
+
+* `PORT:`: [**Optional**] The port number in which the API server should start. Defaults to `6060`.
+* `CLIENT_ORIGIN_URL`: [**Optional**] The CORS allowed origin of the client. Defaults to `http://localhost:4040`.
+
+Here's an example of how your `.env` file could look:
+
+```sh
+PORT=6060
+CLIENT_ORIGIN_URL=http://localhost:4040
+```
+
 ##  Starting the server
 
 You can start the server in a terminal using the command:
