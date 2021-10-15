@@ -10,5 +10,7 @@ import lombok.Value;
 @ConfigurationProperties(prefix = "application")
 public class ApplicationProperties {
 
+  private String audience;
+
   private String clientOriginUrl;
 }
