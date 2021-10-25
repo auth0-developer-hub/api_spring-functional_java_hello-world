@@ -2,6 +2,7 @@ package com.example.helloworld.handlers;
 
 import static org.springframework.web.servlet.function.ServerResponse.ok;
 
+import com.example.helloworld.config.security.CanReadMessages;
 import com.example.helloworld.models.APIMessage;
 
 import org.springframework.stereotype.Component;
@@ -31,9 +32,7 @@ public class MessageHandler {
       .body(APIMessage.from(message));
   }
 
-  /**
-   * @param request required by the router handler
-   */
+  @CanReadMessages
   public ServerResponse adminMessage(final ServerRequest request) {
     final var message = "The API successfully recognized you as an admin.";
 

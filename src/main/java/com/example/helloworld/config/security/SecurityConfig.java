@@ -12,6 +12,7 @@ import com.example.helloworld.config.ApplicationProperties;
 import com.example.helloworld.config.ErrorHandler;
 
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -23,12 +24,15 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final ErrorHandler errorHandler;
@@ -51,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .oauth2ResourceServer()
           .authenticationEntryPoint(errorHandler::handleAuthenticationError)
           .jwt()
+            .jwtAuthenticationConverter(jwtAuthenticationConverter())
             .decoder(jwtDecoder());
   }
 
@@ -82,5 +87,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return token.getAudience().contains(applicationProps.getAudience())
       ? OAuth2TokenValidatorResult.success()
       : OAuth2TokenValidatorResult.failure(audienceError);
+  }
+
+  private JwtAuthenticationConverter jwtAuthenticationConverter() {
+    final var jwtAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    jwtAuthoritiesConverter.setAuthoritiesClaimName("permissions");
+    jwtAuthoritiesConverter.setAuthorityPrefix("");
+
+    final var jwtAuthConverter = new JwtAuthenticationConverter();
+    jwtAuthConverter.setJwtGrantedAuthoritiesConverter(jwtAuthoritiesConverter);
+
+    return jwtAuthConverter;
   }
 }

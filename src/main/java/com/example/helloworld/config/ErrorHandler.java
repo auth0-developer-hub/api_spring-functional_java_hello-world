@@ -57,4 +57,11 @@ public class ErrorHandler {
     response.getWriter().write(json);
     response.flushBuffer();
   }
+
+  public ServerResponse handleAccessDenied(final Throwable error, final ServerRequest request) {
+    final var message = "Forbidden. %s".formatted(error.getMessage());
+
+    return ServerResponse.status(HttpStatus.FORBIDDEN)
+      .body(APIMessage.from(message));
+  }
 }

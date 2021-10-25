@@ -6,6 +6,7 @@ import com.example.helloworld.handlers.MessageHandler;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
@@ -43,6 +44,7 @@ public class Router {
           )
           .build()
       )
+      .onError(AccessDeniedException.class, errorHandler::handleAccessDenied)
       .onError(Throwable.class, errorHandler::handleInternalError)
       .build();
   }
