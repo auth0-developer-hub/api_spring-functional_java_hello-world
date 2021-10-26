@@ -12,19 +12,33 @@ import org.springframework.web.servlet.function.ServerResponse;
 @Configuration
 public class Router {
 
+  private static final String API = "/api";
+
+  private static final String MESSAGES = "/messages";
+
+  private static final String PUBLIC = "/public";
+
+  private static final String PROTECTED = "/protected";
+
+  private static final String ADMIN = "/admin";
+
+  public static final String PROTECTED_PATTERN = API.concat(MESSAGES).concat(PROTECTED);
+
+  public static final String ADMIN_PATTERN = API.concat(MESSAGES).concat(ADMIN);
+
   @Bean
   public RouterFunction<ServerResponse> apiRouter(
     final MessageHandler messageHandler,
     final ErrorHandler errorHandler
   ) {
     return route()
-      .path("/api", () ->
+      .path(API, () ->
         route()
-          .path("/messages", () ->
+          .path(MESSAGES, () ->
             route()
-              .GET("/public", messageHandler::publicMessage)
-              .GET("/protected", messageHandler::protectedMessage)
-              .GET("/admin", messageHandler::adminMessage)
+              .GET(PUBLIC, messageHandler::publicMessage)
+              .GET(PROTECTED, messageHandler::protectedMessage)
+              .GET(ADMIN, messageHandler::adminMessage)
               .build()
           )
           .build()

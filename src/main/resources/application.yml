@@ -1,6 +1,7 @@
 ---
 
 application:
+  audience: ${env.AUTH0_AUDIENCE}
   client-origin-url: ${env.CLIENT_ORIGIN_URL:http://localhost:4040}
 
 server:
@@ -12,7 +13,13 @@ server:
 spring:
   mvc:
     throw-exception-if-no-handler-found: true
-  resources:
-    add-mappings: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${env.AUTH0_DOMAIN}/
+  web:
+    resources:
+      add-mappings: false
 
 ...
