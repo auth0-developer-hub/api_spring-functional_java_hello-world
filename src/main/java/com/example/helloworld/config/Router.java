@@ -17,14 +17,17 @@ public class Router {
     final MessageHandler messageHandler,
     final GlobalErrorHandler globalErrorHandler
   ) {
+    final var api = Paths.apiPath();
+    final var messages = api.messagesPath();
+
     return route()
-      .path("/api", () ->
+      .path(api.segment(), () ->
         route()
-          .path("/messages", () ->
+          .path(messages.segment(), () ->
             route()
-              .GET("/public", messageHandler::getPublic)
-              .GET("/protected", messageHandler::getProtected)
-              .GET("/admin", messageHandler::getAdmin)
+              .GET(messages.publicPath().segment(), messageHandler::getPublic)
+              .GET(messages.protectedPath().segment(), messageHandler::getProtected)
+              .GET(messages.adminPath().segment(), messageHandler::getAdmin)
               .build()
           )
           .build()
