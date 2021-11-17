@@ -2,6 +2,7 @@ package com.example.helloworld.handlers;
 
 import static org.springframework.web.servlet.function.ServerResponse.ok;
 
+import com.example.helloworld.config.security.CanReadMessages;
 import com.example.helloworld.services.MessageService;
 
 import org.springframework.stereotype.Component;
@@ -34,9 +35,7 @@ public class MessageHandler {
     return ok().body(message);
   }
 
-  /**
-   * @param request required by the router handler
-   */
+  @CanReadMessages
   public ServerResponse getAdmin(final ServerRequest request) {
     final var message = messageService.getAdminMessage();
 

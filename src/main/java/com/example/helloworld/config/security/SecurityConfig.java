@@ -7,6 +7,7 @@ import com.example.helloworld.config.Paths;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,11 +20,14 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final GlobalErrorHandler errorHandler;
@@ -59,7 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     .oauth2ResourceServer(oauth2ResourceServer ->
       oauth2ResourceServer
         .authenticationEntryPoint(errorHandler::handleAuthenticationError)
-        .jwt(jwt -> jwt.decoder(makeJwtDecoder()))
+        .jwt(jwt ->
+          jwt
+            .decoder(makeJwtDecoder())
+            .jwtAuthenticationConverter(makePermissionsConverter())
+        )
     );
   }
 
@@ -83,5 +91,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return token.getAudience().contains(applicationProps.audience())
       ? OAuth2TokenValidatorResult.success()
       : OAuth2TokenValidatorResult.failure(audienceError);
+  }
+
+  private JwtAuthenticationConverter makePermissionsConverter() {
+    final var jwtAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    jwtAuthoritiesConverter.setAuthoritiesClaimName("permissions");
+    jwtAuthoritiesConverter.setAuthorityPrefix("");
+
+    final var jwtAuthConverter = new JwtAuthenticationConverter();
+    jwtAuthConverter.setJwtGrantedAuthoritiesConverter(jwtAuthoritiesConverter);
+
+    return jwtAuthConverter;
   }
 }

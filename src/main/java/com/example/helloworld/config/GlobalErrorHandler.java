@@ -57,4 +57,14 @@ public class GlobalErrorHandler {
     response.getWriter().write(json);
     response.flushBuffer();
   }
+
+  /**
+   * @param request required by the router error handler
+   */
+  public ServerResponse handleAccessDenied(final Throwable error, final ServerRequest request) {
+    final var errorText = "Forbidden. %s".formatted(error.getMessage());
+
+    return ServerResponse.status(HttpStatus.FORBIDDEN)
+      .body(ErrorMessage.from(errorText));
+  }
 }
