@@ -29,7 +29,7 @@ public class GlobalErrorHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NoHandlerFoundException.class)
   public ErrorMessage handleNotFound(final HttpServletRequest request, final Exception ex) {
-    return ErrorMessage.from("Not found");
+    return ErrorMessage.from("Not Found");
   }
 
   /**
@@ -59,12 +59,11 @@ public class GlobalErrorHandler {
   }
 
   /**
+   * @param error required by the router error handler
    * @param request required by the router error handler
    */
   public ServerResponse handleAccessDenied(final Throwable error, final ServerRequest request) {
-    final var errorText = "Forbidden. %s".formatted(error.getMessage());
-
     return ServerResponse.status(HttpStatus.FORBIDDEN)
-      .body(ErrorMessage.from(errorText));
+      .body(ErrorMessage.from("Permission denied"));
   }
 }
