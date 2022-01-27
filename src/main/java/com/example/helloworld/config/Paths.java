@@ -39,7 +39,7 @@ public sealed interface Paths {
       public MessagesEndpoint publicPath() {
         return new MessagesEndpoint("/public");
       }
-      
+
       public MessagesEndpoint protectedPath() {
         return new MessagesEndpoint("/protected");
       }

@@ -1,5 +1,7 @@
 package com.example.helloworld.config.security;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -9,10 +11,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(HIGHEST_PRECEDENCE)
 public class ResponseHeadersFilter implements Filter {
 
   @Override
